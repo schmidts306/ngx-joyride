@@ -10,6 +10,7 @@ export class JoyrideOptions {
     showPrevButton?: boolean;
     customTexts?: CustomTexts;
     logsEnabled?: boolean;
+    noScrolling?: boolean;
 }
 
 export class ICustomTexts {
@@ -19,7 +20,7 @@ export class ICustomTexts {
     close?;
 }
 
-export class CustomTexts implements ICustomTexts{
+export class CustomTexts implements ICustomTexts {
     prev?: string | Observable<string>;
     next?: string | Observable<string>;
     done?: string | Observable<string>;

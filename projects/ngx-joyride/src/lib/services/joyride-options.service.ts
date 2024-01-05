@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
 import {
-    JoyrideOptions,
     CustomTexts,
-    ICustomTexts
+    ICustomTexts,
+    JoyrideOptions,
 } from '../models/joyride-options.class';
-import { of, Observable } from 'rxjs';
 
 export const DEFAULT_THEME_COLOR = '#3b5560';
 export const STEP_DEFAULT_POSITION = 'bottom';
@@ -20,7 +20,7 @@ export const DEFAULT_TEXTS: ObservableCustomTexts = {
     prev: of('prev'),
     next: of('next'),
     done: of('done'),
-    close: of(null)
+    close: of(null),
 };
 
 export interface IJoyrideOptionsService {
@@ -40,6 +40,7 @@ export interface IJoyrideOptionsService {
 @Injectable()
 export class JoyrideOptionsService implements IJoyrideOptionsService {
     private themeColor: string = DEFAULT_THEME_COLOR;
+    private noScrolling: boolean = false;
     private stepDefaultPosition: string = STEP_DEFAULT_POSITION;
     private logsEnabled = false;
     private showCounter = true;
@@ -69,6 +70,9 @@ export class JoyrideOptionsService implements IJoyrideOptionsService {
         this.themeColor = options.themeColor
             ? options.themeColor
             : this.themeColor;
+        this.noScrolling = options.noScrolling
+            ? options.noScrolling
+            : this.noScrolling;
         this.firstStep = options.startWith;
         this.waitingTime =
             typeof options.waitingTime !== 'undefined'
@@ -85,6 +89,10 @@ export class JoyrideOptionsService implements IJoyrideOptionsService {
 
     getThemeColor() {
         return this.themeColor;
+    }
+
+    getNoScroling() {
+        return this.noScrolling;
     }
 
     getStepDefaultPosition() {
@@ -132,7 +140,7 @@ export class JoyrideOptionsService implements IJoyrideOptionsService {
             prev: this.toObservable(prev),
             next: this.toObservable(next),
             done: this.toObservable(done),
-            close: this.toObservable(close)
+            close: this.toObservable(close),
         } as ObservableCustomTexts;
     }
 

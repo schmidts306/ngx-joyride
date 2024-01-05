@@ -1,29 +1,28 @@
 import {
-    Component,
-    Input,
     AfterViewInit,
-    ViewEncapsulation,
-    OnInit,
-    OnDestroy,
+    Component,
     ElementRef,
-    ViewChild,
-    Renderer2,
     Injector,
+    Input,
+    OnDestroy,
+    OnInit,
+    Renderer2,
     TemplateRef,
-    HostListener
+    ViewChild,
+    ViewEncapsulation,
 } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
 import { JoyrideStep } from '../../models/joyride-step.class';
 import {
-    JoyrideStepService,
     ARROW_SIZE,
     DISTANCE_FROM_TARGET,
-    IJoyrideStepService
+    IJoyrideStepService,
+    JoyrideStepService,
 } from '../../services';
-import { JoyrideStepsContainerService } from '../../services/joyride-steps-container.service';
-import { EventListenerService } from '../../services/event-listener.service';
-import { Subscription, Observable } from 'rxjs';
 import { DocumentService } from '../../services/document.service';
+import { EventListenerService } from '../../services/event-listener.service';
 import { JoyrideOptionsService } from '../../services/joyride-options.service';
+import { JoyrideStepsContainerService } from '../../services/joyride-steps-container.service';
 import { LoggerService } from '../../services/logger.service';
 import { TemplatesService } from '../../services/templates.service';
 
@@ -37,16 +36,16 @@ export const DEFAULT_DISTANCE_FROM_MARGIN_LEFT = 2;
 const DEFAULT_DISTANCE_FROM_MARGIN_BOTTOM = 5;
 const DEFAULT_DISTANCE_FROM_MARGIN_RIGHT = 5;
 export enum KEY_CODE {
-  RIGHT_ARROW = 39,
-  LEFT_ARROW = 37,
-  ESCAPE_KEY= 27
+    RIGHT_ARROW = 39,
+    LEFT_ARROW = 37,
+    ESCAPE_KEY = 27,
 }
 
 @Component({
     selector: 'joyride-step',
     templateUrl: './joyride-step.component.html',
     styleUrls: ['./joyride-step.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
 })
 export class JoyrideStepComponent implements OnInit, OnDestroy, AfterViewInit {
     stepWidth: number = STEP_MIN_WIDTH;
@@ -121,8 +120,8 @@ export class JoyrideStepComponent implements OnInit, OnDestroy, AfterViewInit {
         this.isPrevButtonVisible = this.optionsService.isPrevButtonVisible();
         this.themeColor = this.optionsService.getThemeColor();
 
-        if (this.text) this.text.subscribe(val => this.checkRedraw(val));
-        if (this.title) this.title.subscribe(val => this.checkRedraw(val));
+        if (this.text) this.text.subscribe((val) => this.checkRedraw(val));
+        if (this.title) this.title.subscribe((val) => this.checkRedraw(val));
     }
 
     ngAfterViewInit() {
@@ -204,8 +203,10 @@ export class JoyrideStepComponent implements OnInit, OnDestroy, AfterViewInit {
             'transform',
             this.step.transformCssStyle
         );
-        this.targetWidth = this.step.targetViewContainer.element.nativeElement.getBoundingClientRect().width;
-        this.targetHeight = this.step.targetViewContainer.element.nativeElement.getBoundingClientRect().height;
+        this.targetWidth =
+            this.step.targetViewContainer.element.nativeElement.getBoundingClientRect().width;
+        this.targetHeight =
+            this.step.targetViewContainer.element.nativeElement.getBoundingClientRect().height;
         this.targetAbsoluteLeft =
             position === 'fixed'
                 ? this.documentService.getElementFixedLeft(
@@ -243,23 +244,23 @@ export class JoyrideStepComponent implements OnInit, OnDestroy, AfterViewInit {
         this.customCounter = this.templateService.getCounter();
     }
 
+    // keyboard navigation disabled
+    //     @HostListener('window:keyup', ['$event'])
+    //     keyEvent(event: KeyboardEvent) {
+    //     console.log(event);
 
-    @HostListener('window:keyup', ['$event'])
-    keyEvent(event: KeyboardEvent) {
-    console.log(event);
-
-    if (event.keyCode === KEY_CODE.RIGHT_ARROW) {
-      if (this.isLastStep()) {
-        this.close();
-      } else {
-        this.next();
-      }
-    } else if (event.keyCode === KEY_CODE.LEFT_ARROW) {
-      this.prev();
-    } else if (event.keyCode === KEY_CODE.ESCAPE_KEY) {
-      this.close();
-    }
-  }
+    //     if (event.keyCode === KEY_CODE.RIGHT_ARROW) {
+    //       if (this.isLastStep()) {
+    //         this.close();
+    //       } else {
+    //         this.next();
+    //       }
+    //     } else if (event.keyCode === KEY_CODE.LEFT_ARROW) {
+    //       this.prev();
+    //     } else if (event.keyCode === KEY_CODE.ESCAPE_KEY) {
+    //       this.close();
+    //     }
+    //   }
 
     prev() {
         this.joyrideStepService.prev();
@@ -324,7 +325,7 @@ export class JoyrideStepComponent implements OnInit, OnDestroy, AfterViewInit {
             this.targetWidth / 2 - this.stepWidth / 2 + this.targetAbsoluteLeft;
         this.stepAbsoluteLeft =
             this.targetWidth / 2 - this.stepWidth / 2 + this.targetAbsoluteLeft;
-        this.arrowLeftPosition = this.stepWidth / 2 - this.arrowSize;
+        this.arrowLeftPosition = this.stepWidth / 2 - this.arrowSize + 10;
         this.adjustLeftPosition();
         this.adjustRightPosition();
         this.arrowPosition = 'bottom';
@@ -341,7 +342,7 @@ export class JoyrideStepComponent implements OnInit, OnDestroy, AfterViewInit {
             this.targetAbsoluteTop +
             this.targetHeight / 2 -
             this.stepHeight / 2;
-        this.arrowTopPosition = this.stepHeight / 2 - this.arrowSize;
+        this.arrowTopPosition = this.stepHeight / 2 - this.arrowSize + 10;
 
         this.leftPosition =
             this.targetAbsoluteLeft + this.targetWidth + DISTANCE_FROM_TARGET;
@@ -362,7 +363,7 @@ export class JoyrideStepComponent implements OnInit, OnDestroy, AfterViewInit {
             this.targetAbsoluteTop + this.targetHeight + DISTANCE_FROM_TARGET;
         this.arrowTopPosition = -this.arrowSize;
 
-        this.arrowLeftPosition = this.stepWidth / 2 - this.arrowSize;
+        this.arrowLeftPosition = this.stepWidth / 2 - this.arrowSize + 10;
         this.leftPosition =
             this.targetWidth / 2 - this.stepWidth / 2 + this.targetAbsoluteLeft;
         this.stepAbsoluteLeft =
@@ -383,7 +384,7 @@ export class JoyrideStepComponent implements OnInit, OnDestroy, AfterViewInit {
             this.targetAbsoluteTop +
             this.targetHeight / 2 -
             this.stepHeight / 2;
-        this.arrowTopPosition = this.stepHeight / 2 - this.arrowSize;
+        this.arrowTopPosition = this.stepHeight / 2 - this.arrowSize + 10;
 
         this.leftPosition =
             this.targetAbsoluteLeft - this.stepWidth - DISTANCE_FROM_TARGET;
@@ -530,7 +531,7 @@ export class JoyrideStepComponent implements OnInit, OnDestroy, AfterViewInit {
         let calcWidth = calcHeight * aspectRatio;
         return {
             width: calcWidth,
-            height: calcHeight
+            height: calcHeight,
         };
     }
     private adjustDimensions(width: number, height: number) {
@@ -546,7 +547,7 @@ export class JoyrideStepComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         return {
             width: newWidth,
-            height: newHeight
+            height: newHeight,
         };
     }
 
@@ -556,7 +557,7 @@ export class JoyrideStepComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     ngOnDestroy() {
-        this.subscriptions.forEach(subscription => {
+        this.subscriptions.forEach((subscription) => {
             subscription.unsubscribe();
         });
     }
